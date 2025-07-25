@@ -27,9 +27,9 @@
 1. **Clone the repository**
    - Clone the repository to your local machine:
      ```bash
-     # Clone using SSH.
+     # Clone using SSH
      git clone git@github.com:xodivorce/npm-xodivorce-preview.git
-     # Or using HTTPS.
+     # Or using HTTPS
      git clone https://github.com/xodivorce/npm-xodivorce.git
      ```
 
@@ -41,24 +41,24 @@
      ```bash
      npm install
      ```
-     
+
 4. **Run the tool:**
    - Run the tool from your terminal:
 
       **Locally:**
       ```bash
-      # Link the package for local development.
+      # Link the package for local development
       npm link
-      # Run the CLI tool.
+      # Run the CLI tool
       xodivorce
-       # For quick testing, use the command `node index.mjs`
+      # For quick testing, use the command `node index.mjs`
       ```
 
       **Production (Public):**
       ```bash
-      # Log in to your npm account.
+      # Log in to your npm account
       npm login
-      # Publish the package to npm.
+      # Publish the package to npm
       npm publish --access public
       ```
 
