@@ -9,12 +9,18 @@
   "author": "Prasid Mandal <hey@xodivorce.in>",
   "license": "MIT",
   "type": "module",
-  "keywords": ["cli", "card", "npx", "xodivorce"],
+  "keywords": [
+    "cli",
+    "card",
+    "npx",
+    "xodivorce"
+  ],
   "dependencies": {
     "boxen": "^8.0.1",
     "chalk": "^5.4.1",
     "dotenv": "^17.2.1",
     "inquirer": "^12.8.2",
-    "open": "^10.2.0"
+    "open": "^10.2.0",
+    "puppeteer": "^24.15.0"
   }
 }

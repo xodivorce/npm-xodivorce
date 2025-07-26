@@ -1,12 +1,10 @@
 #!/usr/bin/env node
+
 import chalk from "chalk";
 import boxen from "boxen";
 import inquirer from "inquirer";
 import open from "open";
-import os from "os";
-import fs from "fs";
-import https from "https";
-import path from "path";
+
 
 const newline = "\n";
 const label = (text) => chalk.bold.white(text.padEnd(14));
@@ -39,7 +37,7 @@ const content = [
 
 const boxed = boxen(content, {
   margin: 2,
-  padding: { top: 1, bottom: 1, left: 12, right: 12},
+  padding: { top: 1, bottom: 1, left: 12, right: 12 },
   borderStyle: "single",
   borderColor: "white",
   backgroundColor: "black",
@@ -47,6 +45,13 @@ const boxed = boxen(content, {
 
 console.log(boxed);
 
+// Graceful exit on Ctrl+C
+process.on("SIGINT", () => {
+  console.log("\n" + chalk.bold.white("Exited gracefully."));
+  process.exit(0);
+});
+
+// Main prompt
 inquirer
   .prompt([
     {
@@ -56,59 +61,85 @@ inquirer
       choices: [
         {
           name: chalk.white("📧  Send Email"),
-          value: () => {
-            console.log(chalk.gray("→ Opening email client..."));
-            return open("mailto:" + data.email);
+          value: async () => {
+            try {
+              console.log(chalk.gray("→ Opening email client..."));
+              await open("mailto:" + data.email);
+              console.log(chalk.green("✔ Email client opened."));
+            } catch (error) {
+              console.error(
+                chalk.red("✖ Failed to open email client:"),
+                chalk.gray(error?.message || "Unknown error")
+              );
+            }
           },
         },
         {
-          name: chalk.white("📄  Download Resume"),
-          value: () => {
-            const fileUrl = "https://xodivorce.in/assets/pdf/CV_PRASID.pdf";
-            const downloadPath = path.join(os.homedir(), "prasid-mandal-resume.pdf");
-            console.log(chalk.gray("→ Downloading Resume..."));
-
-            const file = fs.createWriteStream(downloadPath);
-
-            https.get(fileUrl, (response) => {
-              response.pipe(file);
-
-              file.on("finish", () => {
-                file.close(() => {
-                  console.log(chalk.green("✔ Resume Downloaded at: ") + chalk.white(downloadPath));
-                });
-              });
-            }).on("error", (err) => {
-              fs.unlink(downloadPath, () => {});
-              console.error(chalk.red("✖ Download failed:"), chalk.gray(err.message));
-            });
+          name: chalk.white("📄  View Resume"),
+          value: async () => {
+            const fileUrl = "https://xodivorce.in/core/pdf_config.php";
+            try {
+              console.log(chalk.gray("→ Opening resume in browser..."));
+              await open(fileUrl);
+              console.log(
+                chalk.green("✔ Resume opened in your default browser.")
+              );
+            } catch (error) {
+              console.error(
+                chalk.red("✖ Failed to open resume:"),
+                chalk.gray(error?.message || "Unknown error")
+              );
+            }
           },
         },
         {
-          name: chalk.white("📅  Book a Meeting"),
-          value: () => {
-            console.log(chalk.gray("→ Opening calendar..."));
-            return open("https://cal.com/xodivorce");
+          name: chalk.white("📅  Setup Meeting"),
+          value: async () => {
+            try {
+              console.log(chalk.gray("→ Opening calendar..."));
+              await open("https://cal.com/xodivorce");
+              console.log(
+                chalk.green("✔ Calendar opened in your default browser.")
+              );
+            } catch (error) {
+              console.error(
+                chalk.red("✖ Failed to open calendar:"),
+                chalk.gray(error?.message || "Unknown error")
+              );
+            }
           },
         },
         {
           name: chalk.gray("x   Exit"),
           value: () => {
-            console.log("");
-            console.log(chalk.bold.white("Thank you!"));
-            console.log(chalk.gray("Have a great day."));
-            console.log("");
-            process.exit(0);
+            try {
+              console.log("");
+              console.log(chalk.bold.white("Thank you!"));
+              console.log(chalk.gray("Have a great day."));
+              console.log("");
+              process.exit(0);
+            } catch (error) {
+              console.error(
+                chalk.red("✖ Failed to exit:"),
+                chalk.gray(error?.message || "Unknown error")
+              );
+              process.exit(1);
+            }
           },
         },
       ],
       pageSize: 5,
     },
   ])
-  .then((answer) => {
-    return answer.action();
+  .then(async (answer) => {
+    if (typeof answer.action === "function") {
+      await answer.action();
+    }
   })
   .catch((error) => {
-    console.error(chalk.white("Error:"), chalk.gray(error.message));
+    console.error(
+      chalk.red("✖ Unexpected error occurred:"),
+      chalk.gray(error?.message || "Unknown error")
+    );
     process.exit(1);
   });
