@@ -5,7 +5,7 @@
 
 > **Run this in your terminal to view the card.**
    ```bash
-     npm xodivorce
+     npx xodivorce
    ```
 
 #### A sleek, interactive CLI business card - showcasing contact links, resume also more right from your terminal.
